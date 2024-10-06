@@ -1,30 +1,31 @@
 package HumanFriends.Presenter;
 
-import HumanFriends.Model.HumanFriends;
 import HumanFriends.Model.PackAnimals.Camels;
 import HumanFriends.Model.PackAnimals.Donkeys;
 import HumanFriends.Model.PackAnimals.Horses;
-import HumanFriends.Model.PackAnimals.PackAnimals;
 import HumanFriends.Model.Pets.Cats;
 import HumanFriends.Model.Pets.Dogs;
 import HumanFriends.Model.Pets.Hamsters;
-import HumanFriends.Model.Pets.Pets;
+import HumanFriends.Model.HumanFriends;
+import HumanFriends.Presenter.Registry;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class ConsoleUI {
 
-    Scanner scanner = new Scanner(System.in);
-    Registry registry = new Registry();
-    boolean running = true;
+    public static void consoleUI() {
 
-    public ConsoleUI(){
+        Scanner scanner = new Scanner(System.in);
+        Registry registry = new Registry();
+        boolean running = true;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    }
-    public static void start(Scanner scanner, Registry registry, boolean running) {
+
         while (running) {
-            System.out.println("\nМеню:");
+            System.out.println("\nРеестр домашних животных:");
             System.out.println("1. Добавить животное");
             System.out.println("2. Показать команды животного");
             System.out.println("3. Обучить животное новой команде");
@@ -38,19 +39,34 @@ public class ConsoleUI {
             switch (choice) {
                 case 1:
                     System.out.print("Введите тип животного (домашнее/вьючное): ");
-                    String type = scanner.nextLine();
+                    String type = scanner.nextLine().toLowerCase();
+                    if (!type.equals("домашнее") && !type.equals("вьючное")) {
+                        System.out.println("Неизвестный тип животного. Попробуйте снова.");
+                        break; // Возвращаемся к началу цикла
+                    }
                     System.out.print("Введите имя животного: ");
                     String name = scanner.nextLine();
-                    System.out.print("Введите дату рождения (гггг-мм-дд): ");
-                    LocalDate birthday = scanner.nextLine();
+                    LocalDate birthday = null;
+                    while (birthday == null) {
+                        System.out.print("Введите дату рождения (гггг-мм-дд): ");
+                        String birthdayString = scanner.nextLine();
+                        try {
+                            birthday = LocalDate.parse(birthdayString, formatter);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Некорректный формат даты или дата больше текущей. Пожалуйста, используйте формат 'гггг-мм-дд'.");
+                        }
+                    }
 
                     switch (type.toLowerCase()) {
                         case "домашнее":
                             System.out.print("Введите тип животного (собака/кошка/хомяк): ");
-                            String typeOfPets = scanner.nextLine();
-                            System.out.print("Введите имя хозяина): ");
+                            String typeOfPets = scanner.nextLine().toLowerCase();
+                            if (!typeOfPets.equals("собака") && !typeOfPets.equals("кошка") && !typeOfPets.equals("хомяк")) {
+                                System.out.println("Неизвестный тип домашнего животного. Попробуйте снова.");
+                                break; // Возвращаемся к началу цикла
+                            }
+                            System.out.print("Введите имя хозяина: ");
                             String ownerName = scanner.nextLine();
-                            registry.addHumanFriends(new Pets(name, birthday, ownerName));
                             switch (typeOfPets.toLowerCase()) {
                                 case "собака":
                                     registry.addHumanFriends(new Dogs(name, birthday, ownerName));
@@ -67,10 +83,13 @@ public class ConsoleUI {
                             break;
                         case "вьючное":
                             System.out.print("Введите тип животного (верблюд/осел/лошадь): ");
-                            String typeOfPackAnimals = scanner.nextLine();
-                            System.out.print("Введите назначение): ");
+                            String typeOfPackAnimals = scanner.nextLine().toLowerCase();
+                            if (!typeOfPackAnimals.equals("верблюд") && !typeOfPackAnimals.equals("осел") && !typeOfPackAnimals.equals("лошадь")) {
+                                System.out.println("Неизвестный тип вьючного животного. Попробуйте снова.");
+                                break; // Возвращаемся к началу цикла
+                            }
+                            System.out.print("Введите назначение: ");
                             String appointment = scanner.nextLine();
-                            registry.addHumanFriends(new PackAnimals(name, birthday, appointment));
                             switch (typeOfPackAnimals.toLowerCase()) {
                                 case "верблюд":
                                     registry.addHumanFriends(new Camels(name, birthday, appointment));
@@ -85,8 +104,6 @@ public class ConsoleUI {
                                     System.out.println("Неизвестный тип животного.");
                             }
                             break;
-                        default:
-                            System.out.println("Неизвестный тип животного.");
                     }
                     break;
 
@@ -126,7 +143,8 @@ public class ConsoleUI {
                     break;
 
                 case 5:
-                    humanFriends.getAmount();
+                    HumanFriends.getAmount();
+                    System.out.println(HumanFriends.getAmount());
                     break;
 
                 case 6:

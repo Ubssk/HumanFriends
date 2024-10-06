@@ -7,12 +7,11 @@ import java.util.List;
 public class HumanFriends {
 
     protected List<String> commands; //выполняемые команды
-    public String name; //кличка животного
+    public String name; // кличка животного
     protected LocalDate birthday; // дата рождения
-    private static int amount = 0; // счетчик животных
-//    Animals animals = new Animals();
+    public static int amount = 0; // счетчик животных
 
-    public HumanFriends(String name, LocalDate birthday){
+    public HumanFriends(String name, LocalDate birthday){ // конструктор, принимающий имя и др, создающий лист команд и считающий количество
         this.name = name;
         this.birthday = birthday;
         this.commands = new ArrayList<>();
@@ -20,17 +19,17 @@ public class HumanFriends {
     }
     public void addCommand(String command) {
         commands.add(command);
-    }
+    } // добавление команды
 
     public List<String> getCommands() {
         return commands;
-    }
+    } // получение, имеюшихся команд
 
     public LocalDate getBirthday() {
         return birthday;
-    }
+    } // получение возраста
 
-    public static int getAmount(){
+    public static int getAmount(){ // получение количества животных
         return HumanFriends.amount;
     }
 
