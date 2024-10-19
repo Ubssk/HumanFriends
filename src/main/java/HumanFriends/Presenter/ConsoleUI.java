@@ -12,7 +12,9 @@ import HumanFriends.Presenter.Registry;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ConsoleUI {
 
@@ -34,7 +36,7 @@ public class ConsoleUI {
             System.out.println("6. Выход");
             System.out.print("Выберите опцию: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Считываем остаток строки
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -42,7 +44,7 @@ public class ConsoleUI {
                     String type = scanner.nextLine().toLowerCase();
                     if (!type.equals("домашнее") && !type.equals("вьючное")) {
                         System.out.println("Неизвестный тип животного. Попробуйте снова.");
-                        break; // Возвращаемся к началу цикла
+                        break;
                     }
                     System.out.print("Введите имя животного: ");
                     String name = scanner.nextLine();
@@ -86,7 +88,7 @@ public class ConsoleUI {
                             String typeOfPackAnimals = scanner.nextLine().toLowerCase();
                             if (!typeOfPackAnimals.equals("верблюд") && !typeOfPackAnimals.equals("осел") && !typeOfPackAnimals.equals("лошадь")) {
                                 System.out.println("Неизвестный тип вьючного животного. Попробуйте снова.");
-                                break; // Возвращаемся к началу цикла
+                                break;
                             }
                             System.out.print("Введите назначение: ");
                             String appointment = scanner.nextLine();
@@ -110,12 +112,14 @@ public class ConsoleUI {
                 case 2:
                     System.out.print("Введите имя животного: ");
                     String humanFriendsName = scanner.nextLine();
-                    HumanFriends foundHumanFriends = registry.humanFriend.stream()
-                            .filter(humanFriends -> humanFriends.name.equalsIgnoreCase(humanFriendsName))
-                            .findFirst()
-                            .orElse(null);
-                    if (foundHumanFriends != null) {
-                        registry.listCommands(foundHumanFriends);
+                    List<HumanFriends> foundHumanFriends = registry.humanFriend.stream()
+                            .filter(humanFriends -> humanFriends.getName().equalsIgnoreCase(humanFriendsName)) // Используем getName() если у вас метод для доступа к имени
+                            .collect(Collectors.toList());
+
+                    if (!foundHumanFriends.isEmpty()) {
+                        for (HumanFriends humanFriend : foundHumanFriends) {
+                            registry.listCommands(humanFriend);
+                        }
                     } else {
                         System.out.println("Животное не найдено.");
                     }
@@ -125,14 +129,32 @@ public class ConsoleUI {
                     System.out.print("Введите имя животного: ");
                     humanFriendsName = scanner.nextLine();
                     foundHumanFriends = registry.humanFriend.stream()
-                            .filter(humanFriends -> humanFriends.name.equalsIgnoreCase(humanFriendsName))
-                            .findFirst()
-                            .orElse(null);
-                    if (foundHumanFriends != null) {
-                        System.out.print("Введите новую команду: ");
-                        String newCommand = scanner.nextLine();
-                        foundHumanFriends.addCommand(newCommand);
-                        System.out.println("Команда добавлена.");
+                            .filter(humanFriends -> humanFriends.getName().equalsIgnoreCase(humanFriendsName))
+                            .collect(Collectors.toList());
+
+                    if (!foundHumanFriends.isEmpty()) {
+                        System.out.println("Найденные животные с именем \"" + humanFriendsName + "\":");
+                        for (HumanFriends humanFriend : foundHumanFriends) {
+                            System.out.println("ID: " + humanFriend.getId() + ", Имя: " + humanFriend.getName() + ", Дата рождения: " + humanFriend.getBirthday() + ", Комманды животного: " + humanFriend.getCommands());
+                        }
+
+                        System.out.print("Введите ID животного, для которого хотите добавить команду: ");
+                        int selectedId = scanner.nextInt();
+                        scanner.nextLine();
+
+                        HumanFriends selectedHumanFriend = foundHumanFriends.stream()
+                                .filter(humanFriends -> humanFriends.getId() == selectedId)
+                                .findFirst()
+                                .orElse(null);
+
+                        if (selectedHumanFriend != null) {
+                            System.out.print("Введите новую команду: ");
+                            String newCommand = scanner.nextLine();
+                            selectedHumanFriend.addCommand(newCommand);
+                            System.out.println("Команда добавлена.");
+                        } else {
+                            System.out.println("Животное с таким ID не найдено.");
+                        }
                     } else {
                         System.out.println("Животное не найдено.");
                     }

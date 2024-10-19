@@ -6,9 +6,11 @@ import java.util.List;
 
 public class HumanFriends {
 
-    protected List<String> commands; //выполняемые команды
+    public int id = 1; // Уникальный идентификатор
+
     public String name; // кличка животного
     protected LocalDate birthday; // дата рождения
+    protected List<String> commands; //выполняемые команды
     public static int amount = 0; // счетчик животных
 
     public HumanFriends(String name, LocalDate birthday){ // конструктор, принимающий имя и др, создающий лист команд и считающий количество
@@ -32,9 +34,19 @@ public class HumanFriends {
     public static int getAmount(){ // получение количества животных
         return HumanFriends.amount;
     }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     @Override
     public String toString() {
-        return name + " (" + birthday + ")";
+        return name + " (ID: " + id + ", Birthday: " + birthday + ")";
     }
 }
